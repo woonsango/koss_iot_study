@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music Player</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+<!-- class="image" 라는 속을 img 태그안에 넣어주세요 -->
+<!-- class="title" 라는 속성을 노래이름 태그 안에 넣어주세요-->
+<!--class= "artist"라는 속성을 아티스트 태그 안에 넣어주세요 -->
+  <body>
+    <main>
+    
+      <a href="https://www.melon.com/song/detail.htm?songId=33239419">
+        <img class="image" src="celebrity.jpg">
+      </a>
+
+
+      <div class="player">
+        <div class="progress-bar">
+          <div class="progress"></div>
+        </div>
+
+        <div class="time">
+          <div class="lapse">00:<span class="seconds">00</span></div>
+          <div class="remaining">1000:00<span class="seconds"></span></div>
+        </div>
+
+        <h1 class="title">Celebrity</h1>
+        <span class="artist">아이유</span>
+
+        <ul class="btns">
+          <li>
+            <button class="backward-btn" aria-label="backward">
+              <i class="fa-solid fa-backward"></i>
+            </button>
+          </li>
+          <li>
+            <button class="play-btn" aria-label="play">
+              <i class="fa-solid fa-play"></i>
+            </button>
+            <button class="pause-btn hidden" aria-label="pause">
+              <i class="fa-solid fa-pause"></i>
+            </button>
+          </li>
+          <li>
+            <button class="forward-btn" aria-label="forward">
+              <i class="fa-solid fa-forward"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </main>
+
+    <script
+      src="https://kit.fontawesome.com/f578b19b63.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="script.js"></script>
+  <!-- Code injected by live-server -->
+<script type="text/javascript">
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script></body>
+</html>
