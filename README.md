@@ -130,5 +130,109 @@ app.listen(3000, function() { // 3000 port로 서버 열기
   });
 ```
 ****
-# 3주차: 미세먼지 데이터 웹 페이지로 조회하기
+# 4주차: PyQT5를 이용해 실내 미세먼지 데이터 시각화하기
 ## 3-1. 소스코드(+코드 설명)
+```python
+import sys #pyqt 실행에 필요한 모듈
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel #기본적인 UI 구성요소를 제공하는 모듈
+from matplotlib.backends.backend_qt5agg import FigureCanvas as FigureCanvas # 그래프를 그리기 위한 모듈
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar # 그래프 툴바를 그리기 위한 모듈
+from matplotlib.figure import Figure # 그래프를 그리기 위한 모듈
+from pymongo import MongoClient # python에서 mongodb를 불러오기 위한 모듈
+from PyQt5.QtCore import Qt #pyqt를 사용하기 위한 모듈
+from PyQt5.QtGui import QIcon, QPixmap # 사진을 추가하기 위한 모듈
+
+client = MongoClient("몽고db에서 복붙하기") #내 데이터베이스 불러오기
+
+db = client['test'] #test라는 데이터베이스 불러오기
+
+
+
+class MyApp(QMainWindow): #MyApp클래스 생성
+
+  def __init__(self):
+      super().__init__()
+
+      self.main_widget = QWidget() #main 위젯 생성
+      self.setCentralWidget(self.main_widget) # 
+      vbox = QVBoxLayout(self.main_widget) # 수직 박스 생성
+
+      self.label2 = QLabel() # 미세먼지 정보를 담기위한 라벨 생성
+      self.label2.setAlignment(Qt.AlignCenter) # 가운데 정렬
+      vbox.addWidget(self.label2) # 생성한 라벨을 수직 박스에 추가
+
+      hbox = QHBoxLayout(self.main_widget) # 수평 박스 생성
+      vbox.addLayout(hbox) # 수평 박스를 수직 박스에 추가
+
+      self.IMAGE = QLabel() # 미세번지 상태 그림을 담기위한 라벨 생성
+      hbox.addStretch(1) # 빈 공간 만들기
+      hbox.addWidget(self.IMAGE) # 수평 박스에 그림 라벨 추가
+
+      self.label1 = QLabel() # 미세먼지 상태를 담기 위한 라벨 생성
+      hbox.addWidget(self.label1) # 수평 박스에 미세먼지 상태 라벨 추가
+      hbox.addStretch(1) # 빈 공간 만들기
+
+      dynamic_canvas = FigureCanvas(Figure(figsize=(4, 3))) # (4, 3)짜리의 그래프를 그리기 위한 캔버스 생성
+      self.addToolBar(NavigationToolbar(dynamic_canvas, self)) # 그래프 툴바 생성
+
+      
+      vbox.addWidget(dynamic_canvas) # 수직 박스에 그래프 추가
+      self.dynamic_ax = dynamic_canvas.figure.subplots()  # 좌표축 준비
+      self.timer = dynamic_canvas.new_timer(
+          100, [(self.update_canvas, (), {})])  # 그래프가 변하는 주기를 위한 타이머 준비 (0.1초, 실행되는 함수)
+      self.timer.start()  # 타이머 시작
+
+
+      self.setWindowTitle('실내 미세먼지 농도 측정하기') #타이틀바에 나타나는 창의 제목 설정
+      self.setGeometry(300, 100, 600, 600) #위젯의 위치와 크기 조절
+      self.show() #위젯을 스크린에 보여줌
+
+  def update_canvas(self):  # 그래프 변화 함수
+    
+      self.count=[] #미세먼지 정보에 대한 시간을 담기위한 리스트
+      self.pm2=[] #pm2의 값을 담기 위한 리스트
+      self.pm10=[] #pm10의 값을 담기 위한 리스트
+      self.pm1=[] #pm1의 값을 담기 위한 리스트
+      for d, cnt in zip(db['sensors'].find().sort('created_at', -1), range(100, 0, -1)): #test 데이터베이스의 sensors 값을 가져와서 하나씩 뽑기
+        self.count.append(d['created_at']) # 시간을 count에 저장
+        self.pm2.append(int(d['pm2'])) # pm2의 값을 저장
+        self.pm1.append(int(d['pm1'])) # pm1의 값을 저장
+        self.pm10.append(int(d['pm10'])) # pm10의 값을 저장
+
+      status = f"현재 미세먼지 농도는 {self.pm10[0]}입니다." #pm10의 값을 포함한 문자열 만들기
+      if self.pm10[0] > 150 : #미세먼지 상태를 정하기 위한 부분
+        self.dirty = '매우나쁨'
+      elif self.pm10[0] > 80 :
+        self.dirty = '나쁨'
+      elif self.pm10[0] > 30 :
+        self.dirty = '보통'
+      else :
+        self.dirty = '좋음'
+
+      if self.dirty == '매우나쁨' : #미세먼지 상태에 따른 그림을 정하기 위한 부분
+        i = "default/imt/very_bad.png"
+      elif self.dirty == '나쁨':
+        i = "default/imt/bad.png"
+      elif self.dirty == '보통':
+        i = "default/imt/good.png"
+      elif self.dirty == '좋음':
+        i = "default/imt/very_good.png"
+
+      self.label2.setText(status) #위에서 생성한 라벨에 문자열 추가
+      self.label1.setText(self.dirty) #위에서 생성한 라벨에 문자열 추가
+      self.IMAGE.setPixmap(QPixmap(i)) #위에서 생성한 라벨에 그림 추가
+
+      self.dynamic_ax.clear() # 그래프 밀기
+      self.dynamic_ax.plot(self.count, self.pm2, color='pink')  # 점 찍기
+      self.dynamic_ax.plot(self.count, self.pm1, color='red')  # 점 찍기
+      self.dynamic_ax.plot(self.count, self.pm10, color='blue')  # 점 찍기
+      self.dynamic_ax.figure.canvas.draw()  # 그리기
+
+
+
+
+if __name__ == '__main__': # pyqt 실행을 위한 코드
+  app = QApplication(sys.argv)
+  ex = MyApp()
+  sys.exit(app.exec_())
+```
