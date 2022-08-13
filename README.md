@@ -129,9 +129,11 @@ app.listen(3000, function() { // 3000 port로 서버 열기
       );
   });
 ```
+## 3-2. 영상
+
 ****
 # 4주차: PyQT5를 이용해 실내 미세먼지 데이터 시각화하기
-## 3-1. 소스코드(+코드 설명)
+## 4-1. 소스코드(+코드 설명)
 ```python
 import sys #pyqt 실행에 필요한 모듈
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel #기본적인 UI 구성요소를 제공하는 모듈
@@ -237,5 +239,5 @@ if __name__ == '__main__': # pyqt 실행을 위한 코드
   sys.exit(app.exec_())
 ```
 
-## 3-2. 영상
+## 4-2. 영상
 https://user-images.githubusercontent.com/105338988/184513521-9e9ebc72-3f50-4795-afac-521986243d1a.mp4
