@@ -236,3 +236,6 @@ if __name__ == '__main__': # pyqt 실행을 위한 코드
   ex = MyApp()
   sys.exit(app.exec_())
 ```
+
+##3-2. 영상
+https://user-images.githubusercontent.com/105338988/184513521-9e9ebc72-3f50-4795-afac-521986243d1a.mp4
