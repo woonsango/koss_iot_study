@@ -130,7 +130,7 @@ app.listen(3000, function() { // 3000 port로 서버 열기
   });
 ```
 ## 3-2. 영상
-
+https://user-images.githubusercontent.com/105338988/184512300-192a4987-e977-41ea-b337-4683c78a0ce3.mp4
 ****
 # 4주차: PyQT5를 이용해 실내 미세먼지 데이터 시각화하기
 ## 4-1. 소스코드(+코드 설명)
